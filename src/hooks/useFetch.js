@@ -1,28 +1,47 @@
-import { useEffect,useState } from "react";
+import { useState } from "react";
 
-function useFetch(url, options={},errorMenssage="Error en realizar peticion"){
-    const [data,setData] = useState(null);
-    const [isError,setIsError] = useState(false);
-    const [isLoading,setIsLoading] = useState(true);
+function useFetch(initialUrl, initialOptions = {}) {
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(null);
 
-    useEffect(()=>{
-        setData(null);
-        setIsError(false);
+    function doFetch(url = initialUrl, options = initialOptions) {
         setIsLoading(true);
-        fetch(url,{...options})
-             .then((response)=>{
-                if(response.ok){
-                    return response.json();
-                }
-                throw Error(errorMenssage);
-             })
-             .then((data)=> {
-                setData(data);
-             })
-             .catch((e)=>setIsError(true))
-             .finally(()=> setIsLoading(false));
-            },[url]);
+        setIsError(null);
 
-            return[data,isError,isLoading];
+        fetch(url, options)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error al obtener datos");
+                }
+                if (response.status === 204) {
+                    new Promise(
+                        () => {
+                            // Resolve
+                            return {
+                                message: "Recurso eliminado",
+                            };
+                        },
+                        () => {
+                            // Reject
+                            throw Error("Error al obtener datos");
+                        }
+                    );
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setData(data);
+            })
+            .catch((error) => {
+                setIsError(error.message);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }
+
+    return { data, isLoading, isError, doFetch };
 }
-export default useFetch
+
+export default useFetch;

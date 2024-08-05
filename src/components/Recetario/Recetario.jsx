@@ -1,6 +1,5 @@
-import Navbar from "../Navbar";
+
 import React, { useEffect, useState, useRef } from "react";
-//import RecipeCard from "./RecetarioCard";
 import { useNavigate } from "react-router-dom";
 
 const RecipeCard = ({ recipe }) => {

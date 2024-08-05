@@ -1,10 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
-import ArticleForm from "../components/ArticleForm.jsx";
-import Home from "../components/Home.jsx/index.js";
-import Login from "../components/Auth/Login";
-import Layout from "./Layout";
-import ProtectedRoute from "./ProtectedRoute";
-import Profile from "../components/Profile";
+import Layout from "../routes/Layout.jsx";
+import Home from "../pages/Home.jsx";
+import Login from "../components/Auth/Login.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import Profile from "../pages/Profile.jsx";
+import Recetario from "../components/Recetario/Recetario.jsx";
+import RecetarioDetail from "../components/Recetario/RecetarioDetail.jsx"
+import RecetarioEdit from "../components/Recetario/RecetarioEdit.jsx"
+import RecetarioForm from "../components/Recetario/RecetarioForm.jsx"
+
 
 const Router = createBrowserRouter([
     {
@@ -15,17 +19,29 @@ const Router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: "recetas",
+                path: "recetario",
                 children: [
                     {
                         index: true,
-                        element: <h1>Recetas</h1>,
+                        element: <Recetario />,
                     },
                     {
-                        path: "add",
+                        path: ":id",
+                        element: <RecetarioDetail />,
+                    },
+                    {
+                        path: "new",
                         element: (
                             <ProtectedRoute>
-                                <ArticleForm />
+                                <RecetarioForm />
+                            </ProtectedRoute>
+                        ),
+                    },
+                    {
+                        path: "edit",
+                        element: (
+                            <ProtectedRoute>
+                                <RecetarioEdit />
                             </ProtectedRoute>
                         ),
                     },
@@ -34,10 +50,6 @@ const Router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
-            },
-            {
-                path: "songs",
-                element: <FavoritosList />,
             },
             {
                 path: "profile",
@@ -51,7 +63,10 @@ const Router = createBrowserRouter([
     },
     {
         path: "*",
-        element: <h1>Not Found</h1>,
+        element: (      <div>
+            <h1>404 - Página no encontrada</h1>
+            <p>Esta receta no existe... aún... </p>
+          </div>),
     },
 ]);
 

@@ -1,12 +1,7 @@
-import RecetaList from '../components/Cards/RecetaList';
-
-function Home() {
-  return (
-    <div>
-      <h1>Bienvenido a la aplicación de recetas</h1>
-      <RecetaList />
-    </div>
-  );
+export default function Home() {
+    return (
+        <div>
+            <h1>Home</h1>
+        </div>
+    );
 }
-
-export default Home;

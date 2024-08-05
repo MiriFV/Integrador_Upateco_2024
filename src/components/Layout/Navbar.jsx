@@ -1,40 +1,69 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from "react-router-dom";
 
-function Navbar() {
-  return (
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-            <svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-            </svg>
-        </a>
-
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-start">
-            <Link to="/">
-                <a class="navbar-item">
-                    Home
-                </a></Link>
-            <Link to="/profile">
-                <a class="navbar-item">
-                    Porfile
-                </a></Link>
-
-            </div>
-
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-primary">
-                            <strong>Sign up</strong>
-                        </a>
-                    </div>
+export default function Navbar() {
+    return (
+        <header>
+            <nav
+                className={"navbar"}
+                role="navigation"
+                aria-label="main navigation"
+            >
+                <div className="navbar-start">
+                    <NavLink
+                        to="/"
+                        className={({ isActive, isPending, isTransitioning }) =>
+                            [
+                                isPending ? "pending" : "",
+                                isActive ? "has-text-primary" : "",
+                                isTransitioning ? "transitioning" : "",
+                            ].join(" navbar-item")
+                        }
+                    >
+                        Home
+                    </NavLink>
+                    <NavLink
+                        to="/recetario"
+                        // style={({ isActive }) =>
+                        //     isActive ? { color: "red" } : {}
+                        // }
+                        className={({ isActive, isPending, isTransitioning }) =>
+                            [
+                                isPending ? "pending" : "",
+                                isActive ? "has-text-primary" : "",
+                                isTransitioning ? "transitioning" : "",
+                            ].join(" navbar-item")
+                        }
+                    >
+                        Recetario
+                    </NavLink>
+                    <NavLink
+                        to="/login"
+                        className={({ isActive, isPending, isTransitioning }) =>
+                            [
+                                isPending ? "pending" : "",
+                                isActive ? "has-text-primary" : "",
+                                isTransitioning ? "transitioning" : "",
+                            ].join(" navbar-item")
+                          }
+                    >
+                        Login
+                    </NavLink>
+                    <NavLink
+                        to="/profile"
+                        className={({ isActive, isPending, isTransitioning }) =>
+                            [
+                                isPending ? "pending" : "",
+                                isActive ? "has-text-primary" : "",
+                                isTransitioning ? "transitioning" : "",
+                            ].join(" navbar-item")
+                          }
+                    >
+                        My Perfil
+                    </NavLink>
+                    
+                    
                 </div>
-            </div>
-        </div>
-        </div>
-</nav>
-  );
+            </nav>
+        </header>
+    );
 }
-
-export default Navbar;

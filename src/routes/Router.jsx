@@ -7,7 +7,7 @@ import Profile from "../pages/Profile.jsx";
 import Recetario from "../components/Recetario/Recetario.jsx";
 import RecetarioDetail from "../components/Recetario/RecetarioDetail.jsx"
 import RecetarioEdit from "../components/Recetario/RecetarioEdit.jsx"
-import RecetarioForm from "../components/Recetario/RecetarioForm.jsx"
+import RecetaNew from "../components/Recetario/RecetaNew.jsx"
 
 
 const Router = createBrowserRouter([
@@ -33,7 +33,7 @@ const Router = createBrowserRouter([
                         path: "new",
                         element: (
                             <ProtectedRoute>
-                                <RecetarioForm />
+                                <RecetaNew />
                             </ProtectedRoute>
                         ),
                     },

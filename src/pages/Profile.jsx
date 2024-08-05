@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import useFetch from "../hooks/useFetch";
 import ProfileImageModal from "./ProfileImageModal";
+import { NavLink } from "react-router-dom";
 
 function Profile() {
     const { token } = useAuth("state");
@@ -17,7 +18,6 @@ function Profile() {
     const bioRef = useRef(null);
     const userStateRef = useRef(null);
 
-    // Fetch para cargar tarjeta de perfil
     const {
         data: userData,
         isLoading: isLoadingProfile,
@@ -33,7 +33,6 @@ function Profile() {
         }
     );
 
-    // Fetch para actualizar vía JSON
     const {
         data: updatedUserData,
         isLoading: loadingUpdate,
@@ -41,7 +40,6 @@ function Profile() {
         doFetch: updateProfile,
     } = useFetch();
 
-    // Fetch para actualizar vía FormData
     const {
         data: profileImageData,
         isLoading: isLoadingUpdate,
@@ -74,7 +72,6 @@ function Profile() {
 
     useEffect(() => {
         if (profileImageData) {
-            // Si no es null o undefined
             userData.image = profileImageData.image;
         }
     }, [profileImageData]);
@@ -90,9 +87,7 @@ function Profile() {
     function handleSubmit(event) {
         event.preventDefault();
         updateProfile(
-            `https://sandbox.academiadevelopers.com/users/profiles/${
-                userData.user__id
-            }/`,
+            `https://sandbox.academiadevelopers.com/users/profiles/${userData.user__id}/`,
             {
                 method: "PATCH",
                 headers: {
@@ -114,9 +109,7 @@ function Profile() {
         const newUserStateID = event.target.value;
 
         updateProfile(
-            `https://sandbox.academiadevelopers.com/users/profiles/${
-                userData.user__id
-            }/`,
+            `https://sandbox.academiadevelopers.com/users/profiles/${userData.user__id}/`,
             {
                 method: "PATCH",
                 headers: {
@@ -188,55 +181,17 @@ function Profile() {
                                             userData.last_name}
                                     </p>
                                 )}
-                                {isEditingState ? (
-                                    <div className="field">
-                                        <div className="control">
-                                            <div className="select is-small">
-                                                <select
-                                                    ref={userStateRef}
-                                                    defaultValue={
-                                                        userData.state.id
-                                                    }
-                                                    onChange={handleStateChange}
-                                                >
-                                                    {/* {isLoadingUserStates && (
-                                                        <option>
-                                                            Cargando estados...
-                                                        </option>
-                                                    )}
-                                                    {isErrorUserStates && (
-                                                        <option>
-                                                            Error al cargar los
-                                                            estados
-                                                        </option>
-                                                    )} */}
-                                                    {userStates &&
-                                                        userStates.results.map(
-                                                            (state) => (
-                                                                <option
-                                                                    key={
-                                                                        state.id
-                                                                    }
-                                                                    value={
-                                                                        state.id
-                                                                    }
-                                                                >
-                                                                    {state.name}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
+                                {/* Aseguramos que userData.state no sea null */}
+                                {userData.state && (
                                     <div
                                         className="subtitle is-6"
                                         style={{
                                             display: "flex",
                                             alignItems: "center",
                                         }}
-                                        onClick={() => setIsEditingState(true)}
+                                        onClick={() =>
+                                            setIsEditingState(true)
+                                        }
                                     >
                                         <img
                                             src={`${
@@ -335,6 +290,19 @@ function Profile() {
                             updateProfileImage,
                         }}
                     />
+                    <button className="button is-primary">
+        <NavLink
+          to="/recetario/new"
+          className={({ isActive, isPending, isTransitioning }) =>
+            [
+              isPending ? "pending" : "",
+              isActive ? "has-text-primary" : "",
+              isTransitioning ? "transitioning" : "",
+            ].join(" navbar-item")
+          }
+        >
+          Agregar nueva Receta
+        </NavLink></button>
                 </>
             ) : (
                 <p className="subtitle">No se encontraron datos del usuario.</p>

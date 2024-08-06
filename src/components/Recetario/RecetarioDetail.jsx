@@ -49,6 +49,9 @@ const Detail = () => {
                     <li key={index}>{ingredient}</li>
                 ))}
             </ul>
+            <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+            <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
+            
         </div>
     );
    

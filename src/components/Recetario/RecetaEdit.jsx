@@ -1,24 +1,64 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Layout/Navbar";
+import { useParams } from "react-router-dom";
 
 function RecetaEdit() {
+    //control si tiene sesion iniciada
     const auth = useAuth("state");
-console.log(auth)
     if (!auth) {
-        return <div>Error: Auth no está disponible</div>;
+        return <div>Error: No iniciaste sesion</div>;
     }
-
-    const { token } = auth;
+    //Buscamos id de la receta
+    const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const { token, userID } = auth;
+    const { id } = useParams();
     const navigate = useNavigate();
-
+    //datos para actualizar la receta
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [preparationTime, setPreparationTime] = useState(0);
     const [cookingTime, setCookingTime] = useState(0);
     const [servings, setServings] = useState(1);
     const [image, setImage] = useState(""); 
+    //datos para precargar lo anterior
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
+                if (!response.ok) {
+                    throw new Error("No se pudo cargar los datos");
+                }
+                const recipe = await response.json();
+
+                if (recipe.owner !== userID) {
+                     alert("no eres dueño de esta receta >:c");
+                     return navigate("/");
+                     // Redirige si el usuario no es el creador
+                }
+
+                
+                setSelectedRecipe(recipe);
+                setTitle(recipe.title);
+                setDescription(recipe.description);
+                setPreparationTime(recipe.preparation_time);
+                setCookingTime(recipe.cooking_time);
+                setServings(recipe.servings);
+                setImage(recipe.image);
+
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
+
+        fetchData();
+    }, [id, navigate, userID]);
+
+    if (!recipe) {
+        return <p>Cargando...</p>;
+    }
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,23 +68,23 @@ console.log(auth)
                 description,
                 preparation_time: preparationTime,
                 cooking_time: cookingTime,
-                servings,image
+                servings,image,
             };
 
             const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/recipes/', {
-                method: 'POST',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,  // Incluye el token en la cabecera de autorización
+                    'Authorization': `Token ${token}`,  
                 },
                 body: JSON.stringify(recipeData),
             });
 
-            if (!response.ok) throw new Error('Error al agregar la receta');
+            if (!response.ok) throw new Error('Error al editar la receta');
             
             const result = await response.json();
             console.log("Receta editada:", result);
-            navigate(-1);  // Redirige a la página principal u otra ruta después de agregar la receta
+            navigate(`/recetario/${id}`);  // Redirige a la página de la receta
         } catch (error) {
             console.error('Error al agregar la receta:', error);
         }
@@ -53,7 +93,7 @@ console.log(auth)
     return (
         <div>
             <form onSubmit={handleSubmit} className="box" style={styles.form}>
-                <h1 className="title">Crear Nueva Receta</h1>
+                <h1 className="title">Editar Receta</h1>
                 <div className="field">
                     <label className="label">Título</label>
                     <div className="control">

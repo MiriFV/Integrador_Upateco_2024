@@ -1,23 +1,19 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 const Detail = () => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);
-    const { id } = useParams(); // Cambia el Id por el valor de la receta que deseas mostrar
+    const { id } = useParams(); 
     //const id = String(Id);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes");
+                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
-                const data = await response.json();
-                const results = data.results;
-                
-                const foundRecipe = results.find(recipe => parseInt(recipe.id) === parseInt(id));
+                const foundRecipe = await response.json();
                 
                 if (foundRecipe) {
                     setSelectedRecipe(foundRecipe);

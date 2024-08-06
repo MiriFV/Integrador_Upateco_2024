@@ -34,7 +34,7 @@ console.log(auth)
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,  // Incluye el token en la cabecera de autorización
+                    'Authorization': `Token ${token}`,  
                 },
                 body: JSON.stringify(recipeData),
             });
@@ -43,7 +43,7 @@ console.log(auth)
             
             const result = await response.json();
             console.log("Receta creada:", result);
-            navigate("/");  // Redirige a la página principal u otra ruta después de agregar la receta
+            navigate("/recetario/"); 
         } catch (error) {
             console.error('Error al agregar la receta:', error);
         }

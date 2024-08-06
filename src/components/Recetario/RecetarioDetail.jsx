@@ -10,7 +10,7 @@ const Detail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes");
+                const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/?page_size=100");
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }

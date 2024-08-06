@@ -39,11 +39,16 @@ const Router = createBrowserRouter([
                     },
                     {
                         path: "edit",
-                        element: (
-                            <ProtectedRoute>
-                                <RecetarioEdit />
-                            </ProtectedRoute>
-                        ),
+                        children: [
+                            {
+                                path: ":id",
+                                element: (
+                                     <ProtectedRoute>
+                                         <RecetarioEdit />
+                                     </ProtectedRoute>
+                                ),
+                            }
+                        ],
                     },
                 ],
             },

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Layout/Navbar";
 
-function AddRecipe() {
+function RecetaEdit() {
     const auth = useAuth("state");
 console.log(auth)
     if (!auth) {
@@ -17,7 +18,7 @@ console.log(auth)
     const [preparationTime, setPreparationTime] = useState(0);
     const [cookingTime, setCookingTime] = useState(0);
     const [servings, setServings] = useState(1);
-
+    const [image, setImage] = useState(""); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ console.log(auth)
                 description,
                 preparation_time: preparationTime,
                 cooking_time: cookingTime,
-                servings,
+                servings,image
             };
 
             const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/recipes/', {
@@ -42,8 +43,8 @@ console.log(auth)
             if (!response.ok) throw new Error('Error al agregar la receta');
             
             const result = await response.json();
-            console.log("Receta creada:", result);
-            navigate("/");  // Redirige a la página principal u otra ruta después de agregar la receta
+            console.log("Receta editada:", result);
+            navigate(-1);  // Redirige a la página principal u otra ruta después de agregar la receta
         } catch (error) {
             console.error('Error al agregar la receta:', error);
         }
@@ -139,4 +140,4 @@ const styles = {
     },
 };
 
-export default AddRecipe;
+export default RecetaEdit;

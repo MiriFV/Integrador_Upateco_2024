@@ -1,5 +1,5 @@
-export const RecetaItem = (receta, onAddFavorite) => {
-    return (<>
+function RecetaItem({receta, onAddFavorite}) {
+    return (
         <div class="card">
             <div class="card-image">
                 <figure class="image is-4by3">
@@ -32,6 +32,8 @@ export const RecetaItem = (receta, onAddFavorite) => {
                 <div class="content"><button class="button is-info" onClick={onAddFavorite}> ♥ </button></div>
             </div>
         </div>
-    </>
+    
     );
 };
+
+export default RecetaItem

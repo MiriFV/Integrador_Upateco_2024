@@ -9,6 +9,7 @@ const Detail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                //const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/?page_size=100");
                 const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
@@ -45,6 +46,9 @@ const Detail = () => {
                     <li key={index}>{ingredient}</li>
                 ))}
             </ul>
+            <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+            <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
+            
         </div>
     );
    

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
+
 function Login() {
     const usernameRef = useRef("");
     const passwordRef = useRef("");
@@ -30,8 +31,23 @@ function Login() {
                     return response.json();
                 })
                 .then((responseData) => {
-                    login(responseData.token);
-                })
+                    const { token } = responseData;
+                    fetch("https://sandbox.academiadevelopers.com/users/profiles/profile_data/", {
+                        headers: {
+                            Authorization: `Token ${token}`,
+                        },
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Error al obtener el perfil del usuario");
+                            }
+                            return response.json();
+                        })
+                        .then((profileData) => {
+                            console.log(`User ${profileData.username}`);
+                            login(token, profileData.user__id);
+                        });
+                })        
                 .catch((error) => {
                     console.error("Error error al iniciar sesión", error);
                     setIsError(true);

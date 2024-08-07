@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -10,8 +10,9 @@ function RecetaEdit() {
         return <div>Error: No iniciaste sesion</div>;
     }
     //Buscamos id de la receta
-    const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const [recipe, setSelectedRecipe] = useState(null);
     const { token, userID } = auth;
+    console.log(typeof userID)
     const { id } = useParams();
     const navigate = useNavigate();
     //datos para actualizar la receta
@@ -30,12 +31,14 @@ function RecetaEdit() {
                     throw new Error("No se pudo cargar los datos");
                 }
                 const recipe = await response.json();
+                console.log(typeof recipe.owner)
+                //control para ser editado solo por el usuario, pero no recibimos userID al iniciar sesion
 
-                if (recipe.owner !== userID) {
-                     alert("no eres dueño de esta receta >:c");
-                     return navigate("/");
-                     // Redirige si el usuario no es el creador
-                }
+                 if (recipe.owner !== Number(userID)) {
+                      alert("no eres dueño de esta receta >:c");
+                    return navigate(-1);
+                   // Redirige si el usuario no es el creador
+                 }
 
                 
                 setSelectedRecipe(recipe);
@@ -70,8 +73,9 @@ function RecetaEdit() {
                 cooking_time: cookingTime,
                 servings,image,
             };
+            console.log(recipeData)
 
-            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/recipes/', {
+            const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -86,7 +90,7 @@ function RecetaEdit() {
             console.log("Receta editada:", result);
             navigate(`/recetario/${id}`);  // Redirige a la página de la receta
         } catch (error) {
-            console.error('Error al agregar la receta:', error);
+            console.error('Error al editar la receta:', error);
         }
     };
 
@@ -119,6 +123,17 @@ function RecetaEdit() {
                             onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
+                </div>
+                <div className="field">
+                    {/* <label className="label">Imagen</label>
+                    <div className="control">
+                        <textarea
+                            className="textarea"
+                            placeholder="Imagen de la receta"
+                            value={image}
+                            onChange={(e) => setImage(e.target.value)}
+                        />
+                    </div> */}
                 </div>
                 <div className="field">
                     <label className="label">Tiempo de preparación (minutos)</label>
@@ -164,8 +179,10 @@ function RecetaEdit() {
                 <div className="field">
                     <div className="control">
                         <button type="submit" className="button is-primary">
-                            Agregar Receta
+                            Editar Receta
                         </button>
+
+                        <button  className="button is-danger" onClick={() => navigate(-1)}>Cancelar</button>
                     </div>
                 </div>
             </form>

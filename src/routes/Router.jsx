@@ -8,6 +8,7 @@ import Recetario from "../components/Recetario/Recetario.jsx";
 import RecetarioDetail from "../components/Recetario/RecetarioDetail.jsx"
 import RecetaEdit from "../components/Recetario/RecetaEdit.jsx"
 import RecetaNew from "../components/Recetario/RecetaNew.jsx"
+import RecetaDelete from "../components/Recetario/RecetaDelete.jsx"
 
 
 const Router = createBrowserRouter([
@@ -44,16 +45,24 @@ const Router = createBrowserRouter([
                                 path: ":id",
                                 element: (
                                      <ProtectedRoute>
-                                         <RecetarioEdit />
+                                         <RecetaEdit />
                                      </ProtectedRoute>
                                 ),
                             }
                         ],
-                        // element: (
-                        //     <ProtectedRoute>
-                        //         <RecetarioEdit />
-                        //     </ProtectedRoute>
-                        // ),
+                    },
+                    {
+                        path: "delete",
+                        children: [
+                            {
+                                path: ":id",
+                                element: (
+                                     <ProtectedRoute>
+                                         <RecetaDelete/>
+                                     </ProtectedRoute>
+                                ),
+                            }
+                        ],
                     },
                 ],
             },

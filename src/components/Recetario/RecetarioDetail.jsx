@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Detail = () => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const { id } = useParams(); 
+    const navigate = useNavigate();
     //const id = String(Id);
 
     useEffect(() => {
@@ -46,8 +48,8 @@ const Detail = () => {
                     <li key={index}>{ingredient}</li>
                 ))}
             </ul>
-            <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
-            <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
+            <button className="button is-primary" onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+            <button className="button is-danger" onClick={() => navigate(`/recetario/delete/${selectedRecipe.id}`)}>Eliminar</button>
             
         </div>
     );

@@ -1,26 +1,72 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Importar useParams y useNavigate
 
+// Componente para mostrar la primera tarjeta con la información básica de la receta
+const FrirstCard = ({ recipe })=>{
+    return (
+        <div className="card">
+            {recipe.image && <img src={recipe.image} alt={recipe.title} />}
+            <div className="card-content">
+                <h2 className="title is-1">{recipe.title}</h2>
+                <p><strong>Tiempo de preparación:</strong> {recipe.preparation_time} minutos</p>
+                <p><strong>Tiempo de cocción:</strong> {recipe.cooking_time} minutos</p>
+            </div>
+        </div>
+    );
+};
+
+// Componente para mostrar la segunda tarjeta con la descripción de la receta
+
+const SecondCard = ({ recipe }) =>{
+    return (
+        <div className="card">
+            <div className="card-content">
+                <h2 className="title is-2">Descripcion</h2>
+                <p>{recipe.description}.</p>
+            </div>
+        </div>
+    );
+};
+
+// Componente para mostrar la tercera tarjeta con los ingredientes de la receta
+const ThirdCard = ({ recipe }) =>{
+    return (
+        <div className="card">
+            
+            <div className="card-content">
+            <h3 className="title is-3">Ingredientes:</h3>
+                <ul>
+                    {recipe.ingredients.map((ingredient, index) => (
+                    <li key={index}>{ingredient}</li>
+                    ))}
+                </ul>
+            </div>    
+        </div>
+    );
+};
+
+// Componente principal para mostrar los detalles de una receta seleccionada
 const Detail = () => {
-    const [selectedRecipe, setSelectedRecipe] = useState(null);
-    const { id } = useParams(); // Cambia el Id por el valor de la receta que deseas mostrar
-    //const id = String(Id);
+    const [selectedRecipe, setSelectedRecipe] = useState(null);  // Estado para almacenar la receta seleccionada
+    const { id } = useParams();  // Obtener el id de la receta de los parámetros de la URL
 
     useEffect(() => {
         const fetchData = async () => {
+            // Función para obtener los datos de las recetas desde la API
             try {
                 const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/?page_size=100");
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
-                const data = await response.json();
-                const results = data.results;
+                const data = await response.json(); // Parsear la respuesta a JSON
+                const results = data.results; // Obtener la lista de recetas
                 
+                // Buscar la receta seleccionada por id
                 const foundRecipe = results.find(recipe => parseInt(recipe.id) === parseInt(id));
                 
                 if (foundRecipe) {
-                    setSelectedRecipe(foundRecipe);
+                    setSelectedRecipe(foundRecipe); // Establecer la receta seleccionada en el estado
                 } else {
                     console.log("La receta no fue encontrada.");
                 }
@@ -30,31 +76,44 @@ const Detail = () => {
         };
 
         fetchData();
-    }, [id]);
+    }, [id]);  // Ejecutar el efecto cada vez que cambia el id
 
+    // Mostrar un mensaje de carga mientras se obtiene la receta seleccionada
     if (!selectedRecipe) {
         return <p>Cargando...</p>;
-    }
-
-    return (
-        <div>
-            <h2>{selectedRecipe.title}</h2>
-            <img src={selectedRecipe.image} alt={selectedRecipe.title} />
-            <p><strong>Descripción:</strong> {selectedRecipe.description}</p>
-            <p><strong>Tiempo de preparación:</strong> {selectedRecipe.preparation_time} minutos</p>
-            <p><strong>Tiempo de cocción:</strong> {selectedRecipe.cooking_time} minutos</p>
-            <h3>Ingredientes:</h3>
-            <ul>
-                {selectedRecipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                ))}
-            </ul>
-            <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
-            <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
+    }// else {
+    //     return <p>Receta no encontrada</p>;
+    // }
+//     return (
+//         <div>
+//             <h2>{selectedRecipe.title}</h2>
+//             <img src={selectedRecipe.image} alt={selectedRecipe.title} />
+//             <p><strong>Descripción:</strong> {selectedRecipe.description}</p>
+//             <p><strong>Tiempo de preparación:</strong> {selectedRecipe.preparation_time} minutos</p>
+//             <p><strong>Tiempo de cocción:</strong> {selectedRecipe.cooking_time} minutos</p>
+//             <h3>Ingredientes:</h3>
+//             <ul>
+//                 {selectedRecipe.ingredients.map((ingredient, index) => (
+//                     <li key={index}>{ingredient}</li>
+//                 ))}
+//             </ul>
+//             <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+//             <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
             
-        </div>
-    );
+//         </div>
+//     );
    
+// };
+
+return (
+    <div>
+        <FrirstCard recipe = {selectedRecipe}/>
+        <SecondCard recipe = {selectedRecipe}/>
+        <ThirdCard recipe = {selectedRecipe}/>
+        <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+    </div>
+);
+
 };
 
 export default Detail;

@@ -1,6 +1,21 @@
-import { Link, NavLink } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useState } from "react";
 
 export default function Navbar() {
+    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleSearchSubmit = (event) => {
+        event.preventDefault();
+        // Aquí puedes manejar la búsqueda, por ejemplo, redireccionando a una página de resultados
+        navigate(`recetario/?title=${searchTerm}`);
+        console.log("captura busqueda ", searchTerm);
+    };
+
     return (
         <header>
             <nav
@@ -61,8 +76,23 @@ export default function Navbar() {
                         My Perfil
                     </NavLink>
                     
-                    
                 </div>
+                        <div className="navbar-end">
+                            <form onSubmit={handleSearchSubmit} className="navbar-item">
+                                <input
+                                        type="text"
+                                        className="input"
+                                        placeholder="Buscar..."
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                    />
+                                <button type="submit" className="button">
+                                    Buscar
+                                </button>
+                            </form>
+                    
+                    
+                    </div>
             </nav>
         </header>
     );

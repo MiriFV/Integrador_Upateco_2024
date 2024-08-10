@@ -176,7 +176,7 @@ const createRecipe = async (recipeData, token) => {
 const createAndAssociateIngredients = async (recipeID, ingredients, token) => {
     const ingredientPromises = ingredients.map(async (ingredient) => {
         const ingredientData = {
-            name: ingredient.nameIng,
+            name: ingredient.nameIng
         };
 
         const responseIng = await fetch('https://sandbox.academiadevelopers.com/reciperover/ingredients/', {
@@ -207,7 +207,7 @@ const createAndAssociateIngredients = async (recipeID, ingredients, token) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`,
+                'Authorization': `Token ${token}`
             },
             body: JSON.stringify(ingredientRecipeData),
         });

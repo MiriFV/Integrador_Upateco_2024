@@ -1,6 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Importar useParams y useNavigate
+import { useAuth } from "../../contexts/AuthContext";
+//import myUseFetch from "../../hooks/myUseFetch";
+
 
 // Componente para mostrar la primera tarjeta con la información básica de la receta
 const FrirstCard = ({ recipe })=>{
@@ -46,11 +48,31 @@ const ThirdCard = ({ recipe }) =>{
     );
 };
 
-// Componente principal para mostrar los detalles de una receta seleccionada
+
+const ComentCard = ({ comentario }) =>{
+    const { updated_at, comment, rating } = comentario;
+
+    return (
+        <div className="card">
+            <div className="card-content">
+                <p><strong>Fecha de actualización:</strong> {updated_at}</p>
+                <p><strong>Comentario:</strong> {comment}</p>
+                <p><strong>Rating:</strong> {rating}</p>
+            </div>
+        </div>
+    );
+};
+
 const Detail = () => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);  // Estado para almacenar la receta seleccionada
     const { id } = useParams();  // Obtener el id de la receta de los parámetros de la URL
-
+    const [selectComents, setSelectComents] = useState(null);
+    const [averageRating, setAverageRating] = useState(0);
+    const auth = useAuth("state");
+    
+    const { userID } = useAuth("state");
+    console.log("usuario Id: ", userID);
+    
     useEffect(() => {
         const fetchData = async () => {
             // Función para obtener los datos de las recetas desde la API
@@ -69,51 +91,103 @@ const Detail = () => {
                     setSelectedRecipe(foundRecipe); // Establecer la receta seleccionada en el estado
                 } else {
                     console.log("La receta no fue encontrada.");
+                    <p>Receta no encontrada</p>;
                 }
             } catch (error) {
                 console.error("Error al obtener los datos:", error);
             }
         };
 
+        const fetchComent = async () => {
+            try {
+                const response = await fetch("http://sandbox.academiadevelopers.com/reciperover/ratings/?page_size=1000");
+                if (!response.ok) {
+                    throw new Error("No se pudo cargar los datos");
+                }
+                const datacoment = await response.json(); // Parsear la respuesta a JSON
+                const coments = datacoment.results.filter(comment => parseInt(comment.recipe) === parseInt(id));
+
+                //Calcular promedio de rating
+                const ratings = coments.map(comment => comment.rating);
+                const ratingSum = ratings.reduce((acc, curr) => acc + curr, 0);
+                const averageRating = ratingSum / coments.length;
+                
+
+                if (coments) {
+                    setSelectComents(coments);
+                    setAverageRating(averageRating);
+                   
+                } else {
+                    console.log("No se encontraron comentarios para la receta con id:", recipeId);
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
+
+        // const handleSubmit = async () =>{
+        //     console.log("haz echo clic");
+        // }
+
+
         fetchData();
+        fetchComent();
+    //    handleSubmit();
     }, [id]);  // Ejecutar el efecto cada vez que cambia el id
 
     // Mostrar un mensaje de carga mientras se obtiene la receta seleccionada
     if (!selectedRecipe) {
         return <p>Cargando...</p>;
-    }// else {
-    //     return <p>Receta no encontrada</p>;
-    // }
-//     return (
-//         <div>
-//             <h2>{selectedRecipe.title}</h2>
-//             <img src={selectedRecipe.image} alt={selectedRecipe.title} />
-//             <p><strong>Descripción:</strong> {selectedRecipe.description}</p>
-//             <p><strong>Tiempo de preparación:</strong> {selectedRecipe.preparation_time} minutos</p>
-//             <p><strong>Tiempo de cocción:</strong> {selectedRecipe.cooking_time} minutos</p>
-//             <h3>Ingredientes:</h3>
-//             <ul>
-//                 {selectedRecipe.ingredients.map((ingredient, index) => (
-//                     <li key={index}>{ingredient}</li>
-//                 ))}
-//             </ul>
-//             <button  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
-//             <button  onClick={() => navigate(`/recetario/delete`)}>Eliminar</button>
-            
-//         </div>
-//     );
-   
-// };
+    } //else {
+        // return <p>Receta no encontrada</p>;
+     //}
 
 return (
+    <>
     <div>
+        <p>Promedio de los usuarios : {averageRating}</p>
         <FrirstCard recipe = {selectedRecipe}/>
         <SecondCard recipe = {selectedRecipe}/>
         <ThirdCard recipe = {selectedRecipe}/>
-        <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+       {selectedRecipe.owner == userID?
+       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+       ): null}
+       {selectedRecipe.owner == userID?
+       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Eliminar</button>
+       ): null}
     </div>
+    <div>
+        <form className="box">
+            <label htmlFor="comentario">Comentario:</label><br />
+            <input type="text" id="comentario" name="comentario" /><br />
+            <label htmlFor="valoracion">Valoración:</label><br />
+            <select id="valoracion" name="valoracion">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select><br />
+            {/* <input type="submit" value="Enviar" /> */}
+            <button type="submit" className="button is-primary">
+                Comentar..
+            </button>
+        </form>
+    </div>
+
+    <div>
+    <h1>Comentarios:</h1>
+    {selectComents.map((comentario) => (
+        <div key={comentario.id} className="column is-one-third">
+            <ComentCard comentario={comentario} />
+        </div>
+    ))}
+</div>
+    </>
 );
 
 };
 
 export default Detail;
+//onSubmit={handleSubmit}

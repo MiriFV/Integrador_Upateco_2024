@@ -5,7 +5,7 @@ import Navbar from "../Layout/Navbar";
 
 function AddRecipe() {
     const auth = useAuth("state");
-console.log(auth)
+    console.log(auth)
     if (!auth) {
         return <div>Error: Auth no está disponible</div>;
     }

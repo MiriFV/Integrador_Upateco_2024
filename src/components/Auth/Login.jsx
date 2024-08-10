@@ -23,24 +23,75 @@ function Login() {
                     password: passwordRef.current.value,
                 }),
             })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("No se pudo iniciar sesión");
-                    }
-                    return response.json();
-                })
-                .then((responseData) => {
-                    login(responseData.token);
-                })
-                .catch((error) => {
-                    console.error("Error error al iniciar sesión", error);
-                    setIsError(true);
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                });
-        }
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("No se pudo iniciar sesión");
+                }
+                return response.json();
+            })
+            .then((responseData) => {
+                login(responseData.token);
+                if (responseData.token) {
+                    fetch(
+                        `https://sandbox.academiadevelopers.com/users/profiles/profile_data/`,
+                        {
+                            method: "GET",
+                            headers: {
+                                Authorization: `Token ${responseData.token}`,
+                            },
+                        }
+                    )
+                        .then((profileResponse) => {
+                            if (!profileResponse.ok) {
+                                throw new Error(
+                                    "Error al obtener id de usuario"
+                                );
+                            }
+                            return profileResponse.json();
+                        })
+                        .then((profileData) =>
+                            login(responseData.token, profileData.user__id)
+                        )
+                        .catch((error) => {
+                            console.error(
+                                "Error al obtener id de usuario",
+                                error
+                            );
+                            setIsError(true);
+                        });
+                }
+            })
+            .catch((error) => {
+                console.error("Error error al iniciar sesión", error);
+                setIsError(true);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
+}
+
+
+
+
+    //             .then((response) => {
+    //                 if (!response.ok) {
+    //                     throw new Error("No se pudo iniciar sesión");
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then((responseData) => {
+    //                 login(responseData.token);
+    //             })
+    //             .catch((error) => {
+    //                 console.error("Error error al iniciar sesión", error);
+    //                 setIsError(true);
+    //             })
+    //             .finally(() => {
+    //                 setIsLoading(false);
+    //             });
+    //     }
+    // }
 
     return (
         <section className="section">

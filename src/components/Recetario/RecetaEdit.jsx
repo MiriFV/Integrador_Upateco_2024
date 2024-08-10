@@ -6,8 +6,13 @@ import { useParams } from "react-router-dom";
 function RecetaEdit() {
     //control si tiene sesion iniciada
     const auth = useAuth("state");
-    if (!auth) {
-        return <div>Error: No iniciaste sesion</div>;
+    if (!auth || !auth.token) {
+        return (
+            <div>
+                Error: Autenticación no disponible. <br />
+                Recuerda que debes estar logeado para subir una receta.
+            </div>
+        );
     }
     //Buscamos id de la receta
     const [recipe, setSelectedRecipe] = useState(null);

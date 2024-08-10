@@ -68,11 +68,11 @@ const Detail = () => {
     const { id } = useParams();  // Obtener el id de la receta de los parámetros de la URL
     const [selectComents, setSelectComents] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
+    const [formData, setFormData] = useState({ rating: 0, comment: '', recipe: parseInt(id) });
     const auth = useAuth("state");
     
     const { userID } = useAuth("state");
-    console.log("usuario Id: ", userID);
-    
+        
     useEffect(() => {
         const fetchData = async () => {
             // Función para obtener los datos de las recetas desde la API
@@ -135,6 +135,17 @@ const Detail = () => {
     //    handleSubmit();
     }, [id]);  // Ejecutar el efecto cada vez que cambia el id
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(formData); // Aquí puedes enviar los datos al backend o hacer lo que necesites con la estructura {rating, comment}
+        
+    };
+
     // Mostrar un mensaje de carga mientras se obtiene la receta seleccionada
     if (!selectedRecipe) {
         return <p>Cargando...</p>;
@@ -156,24 +167,22 @@ return (
        ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Eliminar</button>
        ): null}
     </div>
+    
     <div>
-        <form className="box">
-            <label htmlFor="comentario">Comentario:</label><br />
-            <input type="text" id="comentario" name="comentario" /><br />
-            <label htmlFor="valoracion">Valoración:</label><br />
-            <select id="valoracion" name="valoracion">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select><br />
-            {/* <input type="submit" value="Enviar" /> */}
-            <button type="submit" className="button is-primary">
-                Comentar..
-            </button>
-        </form>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="comentario">Comentario:</label><br />
+                <input type="text" id="comentario" name="comment" onChange={handleChange} /><br />
+                <label htmlFor="valoracion">Valoración:</label><br />
+                <select id="valoracion" name="rating" onChange={handleChange}>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select><br />
+                <input type="submit" value="Enviar" />
+            </form>
     </div>
 
     <div>
@@ -183,7 +192,7 @@ return (
             <ComentCard comentario={comentario} />
         </div>
     ))}
-</div>
+    </div>
     </>
 );
 

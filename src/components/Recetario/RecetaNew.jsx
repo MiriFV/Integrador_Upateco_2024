@@ -1,54 +1,111 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function AddRecipe() {
     const auth = useAuth("state");
-    console.log(auth)
-    if (!auth) {
-        return <div>Error: Auth no está disponible</div>;
-    }
-
+    
     const { token } = auth;
     const navigate = useNavigate();
-
+  
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [preparationTime, setPreparationTime] = useState(0);
     const [cookingTime, setCookingTime] = useState(0);
     const [servings, setServings] = useState(1);
+    const [ingredients, setIngredients] = useState([]);
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
+    //const [id, setId] = useState();
+  
+    useEffect(
+        () => {
+            fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/?page_size=1000`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            "No se puedieron cargar las categorías"
+                        );
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setIngredients(data.results);
+                })
+                .catch((error) => {
+                    console.error("Error al realizar la petición", error);
+                })
+                //.finally(() => {
+                    //return setLoadingCategories(false);
+                //});
+        },
+        [] /*Cuando se monta el componente*/
+    );
 
+    function handleListChange(event){
+        const selectedOptions = Array.from(
+            event.target.selectedOptions,
+            (option) => option.value // 
+        );
+        const updatedSelectedIngredients = ingredients.filter((ing)=>
+             selectedOptions.includes(String(ing.id))
+        );
+        setSelectedIngredients(updatedSelectedIngredients);
+        
 
+    };
+
+     
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const recipeData = {
-                title,
-                description,
-                preparation_time: preparationTime,
-                cooking_time: cookingTime,
-                servings,
-            };
-
-            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/recipes/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,  
-                },
-                body: JSON.stringify(recipeData),
+        e.preventDefault();          
+        const recipeData = {
+            title,
+            description,
+            preparation_time: preparationTime,
+            cooking_time: cookingTime,
+            servings,
+        };
+        console.log(selectedIngredients);
+        fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify(recipeData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Primer fetch");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setId(data.id);
+                selectedIngredients.forEach((ingr) => {
+                    fetch(
+                        "https://sandbox.academiadevelopers.com/reciperover/recipe-ingredients/",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Token ${token}`,
+                            },
+                            body: JSON.stringify({
+                                quantity: 1,
+                                measure: "g",
+                                recipe: parseInt(data.id),
+                                ingredient: parseInt(ingr.id)
+                            }),
+                        }
+                    );
+                })
+            })
+            .catch((error) => {
+                console.error("Error error al crear la receta segundo fetch", error);
+            })
+            .finally(() => {
+                    return navigate(`/recetario`);
             });
-
-            if (!response.ok) throw new Error('Error al agregar la receta');
-            
-            const result = await response.json();
-            console.log("Receta creada:", result);
-
-            navigate(`/recetario/${id}`);  // Redirige a la página principal u otra ruta después de agregar la receta
-
-        } catch (error) {
-            console.error('Error al agregar la receta:', error);
-        }
     };
 
     return (
@@ -122,6 +179,25 @@ function AddRecipe() {
                         />
                     </div>
                 </div>
+                <div className="field">
+                    <label className="label">Ingredientes</label>
+                    <div className="select is-fullwidth is-multiple">
+                       
+                        <select
+                            multiple
+                            size="5"
+                            value={selectedIngredients.map((ing) => ing.id)}
+                            onChange={handleListChange}
+                       >
+                        {ingredients.map((ingredientes) => (
+                            <option key={ingredientes.id} value={ingredientes.id}>
+                                {ingredientes.name}
+                            </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className="field">
                     <div className="control">
                         <button type="submit" className="button is-primary">

@@ -80,7 +80,7 @@ const RecipeList = () => {
     }, [page, searchTerm]);
 
     return (
-        <div>
+        <div className="conteiner">
             <h1 className="title">Lista de Recetas</h1>
             {recipes.map((recipe) => (
                 <div key={recipe.id} className="column is-one-third">

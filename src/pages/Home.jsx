@@ -2,7 +2,7 @@ export default function Home() {
     //diseñar el home con una receta aleatoria
     return (
         <div>
-            <h1>La receta del dia :</h1>
+            <img src="src/assets/Diseño sin título.png" alt="Recipe Rover: el lugar de tus recetas" />
         </div>
     );
 }

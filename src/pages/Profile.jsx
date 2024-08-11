@@ -127,10 +127,10 @@ function Profile() {
     if (isErrorProfile) return <p>Error: {isErrorProfile}</p>;
 
     return (
-        <div className="card">
+        <div className="card conteiner">
             {userData ? (
                 <>
-                    <form className="card-content" onSubmit={handleSubmit}>
+                    <form className="card-content box" onSubmit={handleSubmit}>
                         <div className="media">
                             <div className="media-left">
                                 <figure className="image is-48x48">

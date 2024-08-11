@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { useParams, useNavigate } from "react-router-dom"; // Importar useParams y useNavigate
 import { useAuth } from "../../contexts/AuthContext";
 import useFetch from "../../hooks/useFetch";
@@ -108,6 +109,7 @@ const Detail = () => {
     const [averageRating, setAverageRating] = useState(0);
     const auth = useAuth("state");
 
+
     const { token } = auth;
     const userID  = auth.userID;
     const navigate = useNavigate();
@@ -117,6 +119,7 @@ const Detail = () => {
         const fetchData = async () => {
             // Función para obtener los datos de las recetas desde la API
             try {
+
                 const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");

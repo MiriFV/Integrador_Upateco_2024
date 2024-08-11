@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
+
 function Login() {
     const usernameRef = useRef("");
     const passwordRef = useRef("");
@@ -23,51 +24,86 @@ function Login() {
                     password: passwordRef.current.value,
                 }),
             })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("No se pudo iniciar sesión");
-                }
-                return response.json();
-            })
-            .then((responseData) => {
-                login(responseData.token);
-                if (responseData.token) {
-                    fetch(
-                        `https://sandbox.academiadevelopers.com/users/profiles/profile_data/`,
-                        {
-                            method: "GET",
-                            headers: {
-                                Authorization: `Token ${responseData.token}`,
-                            },
-                        }
-                    )
-                        .then((profileResponse) => {
-                            if (!profileResponse.ok) {
-                                throw new Error(
-                                    "Error al obtener id de usuario"
-                                );
+//<<<<<<< pablo
+  //          .then((response) => {
+    //            if (!response.ok) {
+      //              throw new Error("No se pudo iniciar sesión");
+        //        }
+         //       return response.json();
+//            })
+  //          .then((responseData) => {
+    //            login(responseData.token);
+      //          if (responseData.token) {
+        //            fetch(
+          //              `https://sandbox.academiadevelopers.com/users/profiles/profile_data/`,
+            //            {
+              //              method: "GET",
+                //            headers: {
+                  //              Authorization: `Token ${responseData.token}`,
+                    //        },
+                      //  }
+ //                   )
+   //                     .then((profileResponse) => {
+     //                       if (!profileResponse.ok) {
+       //                         throw new Error(
+         //                           "Error al obtener id de usuario"
+           //                     );
+             //               }
+               //             return profileResponse.json();
+                 //       })
+                   //     .then((profileData) =>
+                     //       login(responseData.token, profileData.user__id)
+                       // )
+ //                       .catch((error) => {
+   //                         console.error(
+     //                           "Error al obtener id de usuario",
+       //                         error
+         //                   );
+           //                 setIsError(true);
+             //           });
+               // }
+//            })
+  //          .catch((error) => {
+    //            console.error("Error error al iniciar sesión", error);
+      //          setIsError(true);
+        //    })
+          //  .finally(() => {
+            //    setIsLoading(false);
+//            });
+//=======
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("No se pudo iniciar sesión");
+                    }
+                    return response.json();
+                })
+                .then((responseData) => {
+                    const { token } = responseData;
+                    fetch("https://sandbox.academiadevelopers.com/users/profiles/profile_data/", {
+                        headers: {
+                            Authorization: `Token ${token}`,
+                        },
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Error al obtener el perfil del usuario");
                             }
-                            return profileResponse.json();
+                            return response.json();
                         })
-                        .then((profileData) =>
-                            login(responseData.token, profileData.user__id)
-                        )
-                        .catch((error) => {
-                            console.error(
-                                "Error al obtener id de usuario",
-                                error
-                            );
-                            setIsError(true);
+                        .then((profileData) => {
+                            console.log(`User ${profileData.username}`);
+                            login(token, profileData.user__id);
                         });
-                }
-            })
-            .catch((error) => {
-                console.error("Error error al iniciar sesión", error);
-                setIsError(true);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+                })        
+                .catch((error) => {
+                    console.error("Error error al iniciar sesión", error);
+                    setIsError(true);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        }
+//>>>>>>> master
     }
 }
 

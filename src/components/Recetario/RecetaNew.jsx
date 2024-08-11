@@ -1,23 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function AddRecipe() {
     const auth = useAuth("state");
-    console.log(auth)
-    if (!auth) {
-        return <div>Error: Auth no está disponible</div>;
-    }
-
+    
     const { token } = auth;
     const navigate = useNavigate();
-
+    //const [recipeData, setArticleData] = useState({ title: "", description: "",preparation_time: 0,cooking_time: 0, servings:0 });
+4
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [preparationTime, setPreparationTime] = useState(0);
     const [cookingTime, setCookingTime] = useState(0);
     const [servings, setServings] = useState(1);
+    const [ingredients, setIngredients] = useState([]);
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
 
+    useEffect(
+        () => {
+            fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/?page_size=1000`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            "No se puedieron cargar las categorías"
+                        );
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setIngredients(data.results);
+                })
+                .catch((error) => {
+                    console.error("Error al realizar la petición", error);
+                })
+                //.finally(() => {
+                    //return setLoadingCategories(false);
+                //});
+        },
+        [] /*Cuando se monta el componente*/
+    );
+
+    function handleListChange(event){
+        const selectedOptions = Array.from(
+            event.target.selectedOptions,
+            (option) => option.value // 
+        );
+        const updatedSelectedIngredients = ingredients.filter((ing)=>
+            selectedOptions.includes(String(ing.id))
+        );
+        setSelectedIngredients(updatedSelectedIngredients);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -122,6 +155,25 @@ function AddRecipe() {
                         />
                     </div>
                 </div>
+                <div className="field">
+                    <label className="label">Ingredientes</label>
+                    <div className="select is-fullwidth is-multiple">
+                       
+                        <select
+                            multiple
+                            size="5"
+                            value={selectedIngredients.map((ing) => ing.id)}
+                            onChange={handleListChange}
+                       >
+                        {ingredients.map((ingredientes) => (
+                            <option key={ingredientes.id} value={ingredientes.id}>
+                                {ingredientes.name}
+                            </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className="field">
                     <div className="control">
                         <button type="submit" className="button is-primary">

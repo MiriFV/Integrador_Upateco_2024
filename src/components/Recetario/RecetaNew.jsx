@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function AddRecipe() {
     const auth = useAuth("state");
-console.log(auth)
+    console.log(auth)
     if (!auth) {
         return <div>Error: Auth no está disponible</div>;
     }
@@ -43,7 +43,9 @@ console.log(auth)
             
             const result = await response.json();
             console.log("Receta creada:", result);
-            navigate("/recetario/"); 
+
+            navigate(`/recetario/${id}`);  // Redirige a la página principal u otra ruta después de agregar la receta
+
         } catch (error) {
             console.error('Error al agregar la receta:', error);
         }

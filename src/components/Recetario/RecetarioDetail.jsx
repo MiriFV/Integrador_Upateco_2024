@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Importar useParams y useNavigate
 import { useAuth } from "../../contexts/AuthContext";
+import useFetch from "../../hooks/useFetch";
 //import myUseFetch from "../../hooks/myUseFetch";
 
 
@@ -48,16 +49,53 @@ const ThirdCard = ({ recipe }) =>{
     );
 };
 
+const useGetUser = (idUser) => {
+    const [user, setUser] = useState(null);
+    const auth = useAuth("state");
 
-const ComentCard = ({ comentario }) =>{
-    const { updated_at, comment, rating } = comentario;
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await fetch(
+                    `https://sandbox.academiadevelopers.com/users/profiles/${idUser}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Token ${auth.token}`,
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Error al obtener los datos del usuario");
+                }
+
+                const data = await response.json();
+                setUser(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchUser();
+    }, [idUser, auth.token]);
+    console.log(user)
+    return user;
+};
+const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString();  // Esto devuelve una fecha en formato local
+};
+const ComentCard = ({ comentario }) => { 
+    const user = useGetUser(comentario.author);
 
     return (
         <div className="card">
             <div className="card-content">
-                <p><strong>Fecha de actualización:</strong> {updated_at}</p>
-                <p><strong>Comentario:</strong> {comment}</p>
-                <p><strong>Rating:</strong> {rating}</p>
+                <p><strong>Usuario: </strong> {user ? user.first_name+" "+ user.last_name: "Cargando..."}</p>
+                <p><strong>Fecha de actualización:</strong> {formatDate(comentario.updated_at)}</p>
+                <p><strong>Comentario:</strong> {comentario.comment}</p>
+                <p><strong>Rating:</strong> {comentario.rating}</p>
             </div>
         </div>
     );
@@ -70,22 +108,19 @@ const Detail = () => {
     const [averageRating, setAverageRating] = useState(0);
     const [formData, setFormData] = useState({ rating: 0, comment: '', recipe: parseInt(id) });
     const auth = useAuth("state");
-    
-    const { userID } = useAuth("state");
-        
+    const { token } = auth;
+    const userID  = auth.userID;
+    const navigate = useNavigate();
+     
     useEffect(() => {
         const fetchData = async () => {
             // Función para obtener los datos de las recetas desde la API
             try {
-                const response = await fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/?page_size=100");
+                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
-                const data = await response.json(); // Parsear la respuesta a JSON
-                const results = data.results; // Obtener la lista de recetas
-                
-                // Buscar la receta seleccionada por id
-                const foundRecipe = results.find(recipe => parseInt(recipe.id) === parseInt(id));
+                const foundRecipe = await response.json();
                 
                 if (foundRecipe) {
                     setSelectedRecipe(foundRecipe); // Establecer la receta seleccionada en el estado
@@ -135,15 +170,36 @@ const Detail = () => {
     //    handleSubmit();
     }, [id]);  // Ejecutar el efecto cada vez que cambia el id
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const recipe=id;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData); // Aquí puedes enviar los datos al backend o hacer lo que necesites con la estructura {rating, comment}
-        
+        try {
+            const comentData = {
+                rating,
+                comment,
+                recipe,
+            };
+            
+            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/ratings/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}`,  // Incluye el token en la cabecera de autorización
+                },
+                body: JSON.stringify(comentData),
+            });
+
+            if (!response.ok) throw new Error('Error al agregar Comentario');
+            
+            const result = await response.json();
+            console.log("Comentario creado:", result);
+            navigate(`/recetario/${id}`);;  // Redirige a la página principal u otra ruta después de agregar la receta
+        } catch (error) {
+            console.error('Error al agregar comentario:', error);
+        }
     };
 
     // Mostrar un mensaje de carga mientras se obtiene la receta seleccionada
@@ -171,9 +227,9 @@ return (
     <div>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="comentario">Comentario:</label><br />
-                <input type="text" id="comentario" name="comment" onChange={handleChange} /><br />
+                <input type="text" id="comentario" name="comment" onChange={(e) => setComment(e.target.value)} /><br />
                 <label htmlFor="valoracion">Valoración:</label><br />
-                <select id="valoracion" name="rating" onChange={handleChange}>
+                <select id="valoracion" name="rating" onChange={(e) => setRating(e.target.value)}>
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -187,16 +243,19 @@ return (
 
     <div>
     <h1>Comentarios:</h1>
-    {selectComents.map((comentario) => (
-        <div key={comentario.id} className="column is-one-third">
-            <ComentCard comentario={comentario} />
-        </div>
-    ))}
-    </div>
+    {selectComents && selectComents.length > 0 ? (
+        selectComents.map((comentario) => (
+            <div key={comentario.id} className="column is-one-third">
+                <ComentCard comentario={comentario} />
+            </div>
+        ))
+    ) : (
+        <p>No hay comentarios disponibles.</p>
+    )}
+</div>
     </>
 );
 
 };
 
 export default Detail;
-//onSubmit={handleSubmit}

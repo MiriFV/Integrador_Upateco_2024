@@ -136,10 +136,7 @@ function Profile() {
                                 <figure className="image is-48x48">
                                     <img
                                         src={
-                                            `${
-                                                import.meta.env
-                                                    .VITE_API_BASE_URL
-                                            }${userData.image}` ||
+                                            `https://sandbox.academiadevelopers.com/${userData.image}` ||
                                             "https://bulma.io/assets/images/placeholders/96x96.png"
                                         }
                                         alt="Profile image"

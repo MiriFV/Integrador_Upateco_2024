@@ -107,17 +107,12 @@ const Detail = () => {
     const [selectComents, setSelectComents] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
     const auth = useAuth("state");
-<<<<<<< Updated upstream
+
     const { token } = auth;
     const userID  = auth.userID;
     const navigate = useNavigate();
      
-=======
-    
-    const { userID } = useAuth("state");
     console.log("usuario Id: ", userID);
-    
->>>>>>> Stashed changes
     useEffect(() => {
         const fetchData = async () => {
             // Función para obtener los datos de las recetas desde la API
@@ -176,7 +171,6 @@ const Detail = () => {
     //    handleSubmit();
     }, [id]);  // Ejecutar el efecto cada vez que cambia el id
 
-<<<<<<< Updated upstream
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const recipe=id;
@@ -203,14 +197,12 @@ const Detail = () => {
             
             const result = await response.json();
             console.log("Comentario creado:", result);
-            navigate(`/recetario/${id}`);;  // Redirige a la página principal u otra ruta después de agregar la receta
+            navigate(`/recetario/${id}`);  // Redirige a la página principal u otra ruta después de agregar la receta
         } catch (error) {
             console.error('Error al agregar comentario:', error);
         }
     };
 
-=======
->>>>>>> Stashed changes
     // Mostrar un mensaje de carga mientras se obtiene la receta seleccionada
     if (!selectedRecipe) {
         return <p>Cargando...</p>;
@@ -218,35 +210,7 @@ const Detail = () => {
         // return <p>Receta no encontrada</p>;
      //}
 
-     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const recipeData = {
-                title,
-                description,
-                preparation_time: preparationTime,
-                cooking_time: cookingTime,
-                servings,
-            };
 
-            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/recipes/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,  // Incluye el token en la cabecera de autorización
-                },
-                body: JSON.stringify(recipeData),
-            });
-
-            if (!response.ok) throw new Error('Error al agregar la receta');
-            
-            const result = await response.json();
-            console.log("Receta creada:", result);
-            navigate("/");  // Redirige a la página principal u otra ruta después de agregar la receta
-        } catch (error) {
-            console.error('Error al agregar la receta:', error);
-        }
-    };
 
 
 return (
@@ -264,7 +228,6 @@ return (
        ): null}
     </div>
     <div>
-<<<<<<< Updated upstream
             <form onSubmit={handleSubmit}>
                 <label htmlFor="comentario">Comentario:</label><br />
                 <input type="text" id="comentario" name="comment" onChange={(e) => setComment(e.target.value)} /><br />
@@ -279,30 +242,12 @@ return (
                 </select><br />
                 <input type="submit" value="Enviar" />
             </form>
-=======
-        <form onSubmit={handleSubmit} className="box">
-            <label htmlFor="comentario">Comentario:</label><br />
-            <input type="text" id="comentario" name="comentario" /><br />
-            <label htmlFor="valoracion">Valoración:</label><br />
-            <select id="valoracion" name="valoracion">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select><br />
-            {/* <input type="submit" value="Enviar" /> */}
-            <button type="submit" className="button is-primary">
-                Comentar..
-            </button>
-        </form>
->>>>>>> Stashed changes
+
+
     </div>
 
     <div>
     <h1>Comentarios:</h1>
-<<<<<<< Updated upstream
     {selectComents && selectComents.length > 0 ? (
         selectComents.map((comentario) => (
             <div key={comentario.id} className="column is-one-third">
@@ -312,13 +257,7 @@ return (
     ) : (
         <p>No hay comentarios disponibles.</p>
     )}
-=======
-    {selectComents.map((comentario) => (
-        <div key={comentario.id} className="column is-one-third">
-            <ComentCard comentario={comentario} />
-        </div>
-    ))}
->>>>>>> Stashed changes
+
 </div>
     </>
 );

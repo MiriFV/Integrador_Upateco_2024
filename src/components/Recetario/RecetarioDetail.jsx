@@ -120,7 +120,8 @@ const Detail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
+
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
@@ -156,7 +157,7 @@ const Detail = () => {
 
         const fetchComent = async () => {
             try {
-                const response = await fetch("http://sandbox.academiadevelopers.com/reciperover/ratings/?page_size=1000");
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ratings/?page_size=1000`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
@@ -195,7 +196,7 @@ const Detail = () => {
                 recipe: id,
             };
             
-            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/ratings/', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ratings/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -219,28 +220,28 @@ const Detail = () => {
         return <p>Cargando...</p>;
     }
 
-    return (
-        <>
-            <div>
-                <p>Promedio de los usuarios : {averageRating}</p>
-                <FrirstCard recipe={selectedRecipe} />
-                <SecondCard recipe={selectedRecipe} />
-                <ThirdCard ingredients={ingredients} />
-                {selectedRecipe.owner === userID && (
-                    <>
-                        <button className="button is-primary" onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
-                        <button className="button is-primary" onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Eliminar</button>
-                    </>
-                )}
-            </div>
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="comentario">Comentario:</label><br />
-                    <input type="text" id="comentario" name="comment" onChange={(e) => setComment(e.target.value)} /><br />
-                    <label htmlFor="valoracion">Valoración:</label><br />
-                    <select id="valoracion" name="rating" onChange={(e) => setRating(e.target.value)}>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
+return (
+    <>
+    <div>
+        <p>Promedio de los usuarios : {averageRating}</p>
+        <FrirstCard recipe = {selectedRecipe}/>
+        <SecondCard recipe = {selectedRecipe}/>
+        <ThirdCard recipe = {selectedRecipe}/>
+       {selectedRecipe.owner == userID?
+       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
+       ): null}
+       {selectedRecipe.owner == userID?
+       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/delete/${selectedRecipe.id}`)}>Eliminar</button>
+       ): null}
+    </div>
+    <div>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="comentario">Comentario:</label><br />
+                <input type="text" id="comentario" name="comment" onChange={(e) => setComment(e.target.value)} /><br />
+                <label htmlFor="valoracion">Valoración:</label><br />
+                <select id="valoracion" name="rating" onChange={(e) => setRating(e.target.value)}>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>

@@ -9,7 +9,7 @@ import RecetarioDetail from "../components/Recetario/RecetarioDetail.jsx"
 import RecetaEdit from "../components/Recetario/RecetaEdit.jsx"
 import RecetaNew from "../components/Recetario/RecetaNew.jsx"
 import RecetaDelete from "../components/Recetario/RecetaDelete.jsx"
-
+import ErrorPage from "../pages/Error.jsx";
 
 const Router = createBrowserRouter([
     {
@@ -82,10 +82,8 @@ const Router = createBrowserRouter([
     },
     {
         path: "*",
-        element: (      <div>
-            <h1>404 - Página no encontrada</h1>
-            <p>Esta receta no existe... aún... </p>
-          </div>),
+        element: <ErrorPage />
+        ,
     },
 ]);
 

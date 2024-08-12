@@ -11,7 +11,8 @@ import RecetaNew from "../components/Recetario/RecetaNew.jsx"
 import RecetaDelete from "../components/Recetario/RecetaDelete.jsx"
 import ErrorPage from "../pages/Error.jsx";
 
-const Router = createBrowserRouter([
+const Router = createBrowserRouter(
+    [
     {
         element: <Layout />,
         children: [
@@ -85,6 +86,10 @@ const Router = createBrowserRouter([
         element: <ErrorPage />
         ,
     },
-]);
+],
+     {
+        base:'/Integrador_Upateco_2024',
+     }
+);
 
 export { Router };

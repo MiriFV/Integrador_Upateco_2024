@@ -14,7 +14,7 @@ function Login() {
         event.preventDefault();
         if (!isLoading) {
             setIsLoading(true);
-            fetch(`${import.meta.env.VITE_API_BASE_URL}api-auth/`, {
+            fetch(`https://sandbox.academiadevelopers.com/api-auth/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function Login() {
                 })
                 .then((responseData) => {
                     const { token } = responseData;
-                    fetch(`${import.meta.env.VITE_API_BASE_URL}users/profiles/profile_data/`, {
+                    fetch(`https://sandbox.academiadevelopers.com/users/profiles/profile_data/`, {
                         headers: {
                             Authorization: `Token ${token}`,
                         },

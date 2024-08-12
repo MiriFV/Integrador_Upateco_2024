@@ -39,7 +39,7 @@ const RecipeList = () => {
         }).toString();
 
         // Realizar la solicitud fetch
-        fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/?${query}`)
+        fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/?${query}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("No se pudieron cargar las recetas"); // Lanzar error si la respuesta no es ok

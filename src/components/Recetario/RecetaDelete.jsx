@@ -20,7 +20,7 @@ function RecetaDelete() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/${id}/`);
+                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
@@ -55,7 +55,7 @@ function RecetaDelete() {
     const handleDelete = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/${id}/`, {
+            const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Token ${token}`,  

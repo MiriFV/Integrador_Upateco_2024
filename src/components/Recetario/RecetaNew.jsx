@@ -15,8 +15,7 @@ function AddRecipe() {
     const [servings, setServings] = useState(1);
     const [ingredients, setIngredients] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
-    //const [id, setId] = useState();
-  
+   
     useEffect(
         () => {
             fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/?page_size=1000`)
@@ -80,7 +79,7 @@ function AddRecipe() {
                 return response.json();
             })
             .then((data) => {
-                setId(data.id);
+                
                 selectedIngredients.forEach((ingr) => {
                     fetch(
                         "https://sandbox.academiadevelopers.com/reciperover/recipe-ingredients/",

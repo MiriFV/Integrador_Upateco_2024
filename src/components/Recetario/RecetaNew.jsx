@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+
 function AddRecipe() {
     const auth = useAuth("state");
-    
+   
     const { token } = auth;
     const navigate = useNavigate();
-  
+ 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [preparationTime, setPreparationTime] = useState(0);
@@ -40,18 +41,21 @@ function AddRecipe() {
         [] /*Cuando se monta el componente*/
     );
 
+
     function handleListChange(event){
         const selectedOptions = Array.from(
             event.target.selectedOptions,
-            (option) => option.value // 
+            (option) => option.value //
         );
         const updatedSelectedIngredients = ingredients.filter((ing)=>
              selectedOptions.includes(String(ing.id))
         );
         setSelectedIngredients(updatedSelectedIngredients);
-        
+       
+
 
     };
+
 
      
     const handleSubmit = async (e) => {
@@ -79,7 +83,7 @@ function AddRecipe() {
                 return response.json();
             })
             .then((data) => {
-                
+               
                 selectedIngredients.forEach((ingr) => {
                     fetch(
                         `${import.meta.env.VITE_API_BASE_URL}recipe-ingredients/`,
@@ -103,9 +107,10 @@ function AddRecipe() {
                 console.error("Error error al crear la receta segundo fetch", error);
             })
             .finally(() => {
-                    return navigate(`/recetario`);
+                    return navigate(`/recetario/${data.id}`);
             });
     };
+
 
     return (
         <div>
@@ -197,6 +202,7 @@ function AddRecipe() {
                     </div>
                 </div>
 
+
                 <div className="field">
                     <div className="control">
                         <button type="submit" className="button is-primary">
@@ -209,11 +215,13 @@ function AddRecipe() {
     );
 }
 
+
 const styles = {
     form: {
         maxWidth: '600px',
         margin: '0 auto',
     },
 };
+
 
 export default AddRecipe;

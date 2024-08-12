@@ -171,7 +171,8 @@ const Detail = () => {
 
                 if (coments) {
                     setSelectComents(coments);
-                    setAverageRating(averageRating);
+                    if (!averageRating === NaN)
+                        setAverageRating(averageRating);
                 } else {
                     console.log("No se encontraron comentarios para la receta con id:", id);
                 }
@@ -247,7 +248,8 @@ return (
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select><br />
-                <input type="submit" value="Enviar" />
+                {selectedRecipe.owner == userID?
+                (<input type="submit" value="Enviar" />): null}
             </form>
 
 

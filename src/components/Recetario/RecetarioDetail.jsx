@@ -120,7 +120,7 @@ const Detail = () => {
             // Función para obtener los datos de las recetas desde la API
             try {
 
-                const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/recipes/${id}/`);
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/${id}/`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
@@ -139,7 +139,7 @@ const Detail = () => {
 
         const fetchComent = async () => {
             try {
-                const response = await fetch("http://sandbox.academiadevelopers.com/reciperover/ratings/?page_size=1000");
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ratings/?page_size=1000`);
                 if (!response.ok) {
                     throw new Error("No se pudo cargar los datos");
                 }
@@ -187,7 +187,7 @@ const Detail = () => {
                 recipe,
             };
             
-            const response = await fetch('https://sandbox.academiadevelopers.com/reciperover/ratings/', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ratings/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ return (
        ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Editar</button>
        ): null}
        {selectedRecipe.owner == userID?
-       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/edit/${selectedRecipe.id}`)}>Eliminar</button>
+       ( <button className="button is-primary"  onClick={() => navigate(`/recetario/delete/${selectedRecipe.id}`)}>Eliminar</button>
        ): null}
     </div>
     <div>

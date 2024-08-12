@@ -10,7 +10,7 @@ function RecetaImageModal({ isOpen, onClose, userId, onUpload }) {
         formData.append("image", event.target.image.files[0]);
 
         onUpload.updateProfileImage(
-            `https://sandbox.academiadevelopers.com/users/profiles/${userId}/`,
+            `${import.meta.env.VITE_API_BASE_URL}users/profiles/${userId}/`,
             {
                 method: "PATCH",
                 headers: {

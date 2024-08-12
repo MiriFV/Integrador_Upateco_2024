@@ -18,7 +18,7 @@ function AddRecipe() {
    
     useEffect(
         () => {
-            fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/?page_size=1000`)
+            fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ingredients/?page_size=1000`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(
@@ -64,7 +64,7 @@ function AddRecipe() {
             servings,
         };
         console.log(selectedIngredients);
-        fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/", {
+        fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ function AddRecipe() {
                 
                 selectedIngredients.forEach((ingr) => {
                     fetch(
-                        "https://sandbox.academiadevelopers.com/reciperover/recipe-ingredients/",
+                        `${import.meta.env.VITE_API_BASE_URL}recipe-ingredients/`,
                         {
                             method: "POST",
                             headers: {

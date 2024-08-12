@@ -58,7 +58,7 @@ const useGetUser = (idUser) => {
         const fetchUser = async () => {
             try {
                 const response = await fetch(
-                    `https://sandbox.academiadevelopers.com/users/profiles/${idUser}`,
+                    `${import.meta.env.VITE_API_BASE_URL}users/profiles/${idUser}`,
                     {
                         method: "GET",
                         headers: {
@@ -107,6 +107,7 @@ const Detail = () => {
     const { id } = useParams();  // Obtener el id de la receta de los parámetros de la URL
     const [selectComents, setSelectComents] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
+    const [sinRating, setSinRating] = useState(false);
     const auth = useAuth("state");
 
 
@@ -145,7 +146,7 @@ const Detail = () => {
                 }
                 const datacoment = await response.json(); // Parsear la respuesta a JSON
                 const coments = datacoment.results.filter(comment => parseInt(comment.recipe) === parseInt(id));
-
+                
                 //Calcular promedio de rating
                 const ratings = coments.map(comment => comment.rating);
                 const ratingSum = ratings.reduce((acc, curr) => acc + curr, 0);
@@ -154,7 +155,8 @@ const Detail = () => {
 
                 if (coments) {
                     setSelectComents(coments);
-                    setAverageRating(averageRating);
+                    if (!averageRating === NaN)
+                        setAverageRating(averageRating);
                    
                 } else {
                     console.log("No se encontraron comentarios para la receta con id:", recipeId);
@@ -219,7 +221,7 @@ const Detail = () => {
 return (
     <>
     <div>
-        <p>Promedio de los usuarios : {averageRating}</p>
+        <p>Puntuación de usuario: {averageRating}</p>
         <FrirstCard recipe = {selectedRecipe}/>
         <SecondCard recipe = {selectedRecipe}/>
         <ThirdCard recipe = {selectedRecipe}/>
@@ -243,7 +245,8 @@ return (
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select><br />
-                <input type="submit" value="Enviar" />
+                {selectedRecipe.owner == userID?
+                (<input type="submit" value="Enviar" />): null}
             </form>
 
 

@@ -86,10 +86,7 @@ const Router = createBrowserRouter(
         element: <ErrorPage />
         ,
     },
-],
-     {
-        base:'/Integrador_Upateco_2024',
-     }
+]
 );
 
 export { Router };

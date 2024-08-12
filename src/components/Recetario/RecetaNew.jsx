@@ -1,14 +1,14 @@
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-
 function AddRecipe() {
     const auth = useAuth("state");
-   
+    
     const { token } = auth;
     const navigate = useNavigate();
- 
+  
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [preparationTime, setPreparationTime] = useState(0);
@@ -16,10 +16,11 @@ function AddRecipe() {
     const [servings, setServings] = useState(1);
     const [ingredients, setIngredients] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
-   
+    
+  
     useEffect(
         () => {
-            fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/ingredients/?page_size=1000`)
+            fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/?page_size=1000`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(
@@ -41,21 +42,18 @@ function AddRecipe() {
         [] /*Cuando se monta el componente*/
     );
 
-
     function handleListChange(event){
         const selectedOptions = Array.from(
             event.target.selectedOptions,
-            (option) => option.value //
+            (option) => option.value // 
         );
         const updatedSelectedIngredients = ingredients.filter((ing)=>
              selectedOptions.includes(String(ing.id))
         );
         setSelectedIngredients(updatedSelectedIngredients);
-       
-
+        
 
     };
-
 
      
     const handleSubmit = async (e) => {
@@ -68,7 +66,7 @@ function AddRecipe() {
             servings,
         };
         console.log(selectedIngredients);
-        fetch(`${import.meta.env.VITE_API_BASE_URL}reciperover/recipes/`, {
+        fetch("https://sandbox.academiadevelopers.com/reciperover/recipes/", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -83,10 +81,10 @@ function AddRecipe() {
                 return response.json();
             })
             .then((data) => {
-               
+                
                 selectedIngredients.forEach((ingr) => {
                     fetch(
-                        `${import.meta.env.VITE_API_BASE_URL}recipe-ingredients/`,
+                        "https://sandbox.academiadevelopers.com/reciperover/recipe-ingredients/",
                         {
                             method: "POST",
                             headers: {
@@ -107,10 +105,9 @@ function AddRecipe() {
                 console.error("Error error al crear la receta segundo fetch", error);
             })
             .finally(() => {
-                    return navigate(`/recetario/${data.id}`);
+                    return navigate(`/recetario`);
             });
     };
-
 
     return (
         <div>
@@ -202,7 +199,6 @@ function AddRecipe() {
                     </div>
                 </div>
 
-
                 <div className="field">
                     <div className="control">
                         <button type="submit" className="button is-primary">
@@ -215,13 +211,11 @@ function AddRecipe() {
     );
 }
 
-
 const styles = {
     form: {
         maxWidth: '600px',
         margin: '0 auto',
     },
 };
-
 
 export default AddRecipe;

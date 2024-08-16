@@ -72,6 +72,7 @@ const useGetUser = (idUser) => {
                 }
 
                 const data = await response.json();
+                console.log(data)
                 setUser(data);
             } catch (error) {
                 console.error(error);
@@ -96,7 +97,7 @@ const ComentCard = ({ comentario }) => {
     return (
         <div className="card">
             <div className="card-content">
-                <p><strong>Usuario: </strong> {user ? `${user.first_name} ${user.last_name}` : "Cargando..."}</p>
+                <p><strong>Usuario: </strong> {user ? `${user.first_name} ${user.last_name}` : "Anonimo..."}</p>
                 <p><strong>Fecha de actualización:</strong> {formatDate(comentario.updated_at)}</p>
                 <p><strong>Comentario:</strong> {comentario.comment}</p>
                 <p><strong>Rating:</strong> {comentario.rating}</p>
@@ -117,8 +118,7 @@ const Detail = () => {
     const { token } = auth;
     const userID  = auth.userID;
     const navigate = useNavigate();
-     
-    console.log("usuario Id: ", userID);
+    
     
     useEffect(() => {
         const fetchData = async () => {
@@ -161,7 +161,7 @@ const Detail = () => {
             try {
                 const categoriesData = await Promise.all(
                     categoriesIds.map(async (categoriesId) => {
-                        const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/${categoriesId}/`);
+                        const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/categories/${categoriesId}/`);
                         if (!response.ok) {
                             throw new Error(`No se pudo cargar categoria con ID ${categoriesId}`);
                         }
@@ -273,6 +273,7 @@ const Detail = () => {
                 )}
             </div>
             <div>
+            { (
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="comentario">Comentario:</label><br />
                     <input type="text" id="comentario" name="comment" onChange={(e) => setComment(e.target.value)} /><br />
@@ -286,7 +287,7 @@ const Detail = () => {
                     <option value="5">5</option>
                 </select><br />
                     <input type="submit" value="Enviar" />
-            </form>
+            </form>)}
 
 
     </div>

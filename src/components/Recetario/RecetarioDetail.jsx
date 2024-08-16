@@ -11,6 +11,7 @@ const FrirstCard = ({ recipe })=>{
                 <h2 className="title is-1">{recipe.title}</h2>
                 <p><strong>Tiempo de preparación:</strong> {recipe.preparation_time} minutos</p>
                 <p><strong>Tiempo de cocción:</strong> {recipe.cooking_time} minutos</p>
+                <p><strong>Porciones:</strong> {recipe.servings}</p>
             </div>
         </div>
     );
@@ -83,9 +84,10 @@ const useGetUser = (idUser) => {
     return user;
 };
 
+
 const formatDate = (isoString) => {
     const date = new Date(isoString);
-    return date.toLocaleDateString();  // Esto devuelve una fecha en formato local
+    return date.toLocaleDateString();  // Conversion de horario
 };
 
 const ComentCard = ({ comentario }) => { 
@@ -106,6 +108,7 @@ const ComentCard = ({ comentario }) => {
 const Detail = () => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [ingredients, setIngredients] = useState([]);  // Estado para almacenar los ingredientes
+    const [categories, setCategories] = useState([]);
     const { id } = useParams();
     const [selectComents, setSelectComents] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
@@ -129,6 +132,7 @@ const Detail = () => {
                 if (foundRecipe) {
                     setSelectedRecipe(foundRecipe); // Establecer la receta seleccionada en el estado
                     fetchIngredients(foundRecipe.ingredients); // Llamar a la función para obtener los ingredientes usando los IDs
+                    fetchCategories(foundRecipe.categories);
                 } else {
                     console.log("La receta no fue encontrada.");
                 }
@@ -151,6 +155,22 @@ const Detail = () => {
                 setIngredients(ingredientsData); // Guardar los ingredientes en el estado
             } catch (error) {
                 console.error("Error al obtener los ingredientes:", error);
+            }
+        };
+        const fetchCategories = async (categoriesIds) => {
+            try {
+                const categoriesData = await Promise.all(
+                    categoriesIds.map(async (categoriesId) => {
+                        const response = await fetch(`https://sandbox.academiadevelopers.com/reciperover/ingredients/${categoriesId}/`);
+                        if (!response.ok) {
+                            throw new Error(`No se pudo cargar categoria con ID ${categoriesId}`);
+                        }
+                        return await response.json();
+                    })
+                );
+                setCategories(categoriesData); // Guardar los ingredientes en el estado
+            } catch (error) {
+                console.error("Error al obtener las categorias:", error);
             }
         };
 
@@ -199,7 +219,7 @@ const Detail = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,  // Incluye el token en la cabecera de autorización
+                    'Authorization': `Token ${token}`,  // Token
                 },
                 body: JSON.stringify(comentData),
             });
@@ -233,7 +253,15 @@ const Detail = () => {
     return (
         <>
             <div>
-                <p>Promedio de los usuarios : {estrellas(averageRating)}</p>
+                <div className="card">
+                <p>Promedio de los usuarios : {estrellas(averageRating)} <br /> Vistas: {selectedRecipe.view_count}
+                <br /> Categorias : {categories && categories.length > 0 ? (
+                        categories.map((cat, index) => (
+                            <p key={index}>{cat.name}</p>
+                        ))
+                    ) : (
+                        <p>No pertenece a ninguna categoria.</p>
+                    )}</p></div>
                 <FrirstCard recipe={selectedRecipe} />
                 <SecondCard recipe={selectedRecipe} />
                 <ThirdCard ingredients={ingredients} />
